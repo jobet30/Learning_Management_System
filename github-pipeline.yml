@@ -1,0 +1,172 @@
+name: Salesforce CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - develop
+      - release/*
+      - main
+      
+  pull_request:
+    branches:
+      - develop
+      - release/*
+      - main
+
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'Staging'
+        options:
+        - dev
+        - staging
+        - production
+        
+    featured_flag:
+      description: 'Featured flag to deploy to'
+      required: false
+      default: 'false'
+      type: boolean
+
+    deploy_to_prod:
+      description: 'Deploy to production'
+      required: false
+      default: 'false'
+      type: boolean
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build_and_lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Salesforce CLI
+        run: npm install --global sfdx-cli
+
+      - name: Lint Apex Code
+        run: |
+          sfdx force:source:convert -d ./mdapi
+          npx sfdx scanner:run --target "**/classes/**/*.cls"
+
+    apex_test:
+      runs-on: ubuntu-latest
+      needs: build_and_lint
+
+      strategy:
+        matrix:
+          org: [dev, staging]
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v2
+
+        - name: Setup Node.js
+          uses: actions/setup-node@v2
+          with:
+            node-version: '14.x'
+
+        - name: Cache Node.js modules
+          uses: actions/cache@v2
+          with:
+            path: ~/.npm
+            key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+            restore-keys: |
+              ${{ runner.os }}-node-
+
+        - name: Install Salesforce CLI
+          run: npm install --global sfdx-cli
+
+        - name: Authorize DevHub
+          run: |
+            sfdx force:auth:jwt:grant --clientid $SF_CLIENT_ID --jwtkeyfile assets/server.key --username $SF_DEV_HUB_USERNAME --instanceurl https://login.salesforce.com
+
+        - name: Run Apex Tests
+          run: |
+            sfdx force:apex:test:run --resultformat human --wait 10 --testlevel RunLocalTests
+
+        - name: Test Coverage Check
+          run: |
+            TEST_COVERAGE=$(sfdx force:apex:test:report --codecoverage --json | jq -r '.result.summary.testRunCoverage')
+            if (( $(echo "$TEST_COVERAGE < 75" | bc -l) )); then
+              echo "Test coverage below 75%, failing job."
+              exit 1
+            fi
+
+    deploy:
+      runs-on: ubuntu-latest
+      needs: apex_tests
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v2
+
+        - name: Setup Node.js
+          uses: actions/setup-node@v2
+          with:
+            node-version: '14.x'
+
+        - name: Cache Node.js modules
+          uses: actions/cache@v2
+          with:
+            path: ~/.npm
+            key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+            restore-keys: |
+              ${{ runner.os }}-node-
+
+        - name: Install Salesforce CLI
+          run: npm install --global sfdx-cli
+
+        - name: Select Deployment Environment
+          run: |
+            if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
+              echo "Deploying to Production environment"
+              sfdx force:auth:jwt:grant --clientid $SF_CLIENT_ID --jwtkeyfile assets/server.key --username $SF_PRODUCTION_USERNAME --instanceurl https://login.salesforce.com
+            elif [[ "${{ github.event.inputs.environment }}" == "staging" ]]; then
+              echo "Deploying to Staging environment"
+              sfdx force:auth:jwt:grant --clientid $SF_CLIENT_ID --jwtkeyfile assets/server.key --username $SF_STAGING_USERNAME --instanceurl https://test.salesforce.com
+            else
+              echo "Deploying to Dev environment"
+              sfdx force:auth:jwt:grant --clientid $SF_CLIENT_ID --jwtkeyfile assets/server.key --username $SF_DEV_USERNAME --instanceurl https://login.salesforce.com
+
+        - name: Deploy Source to Target Environment
+          run: |
+            sfdx force:source:deploy -p force-app --testlevel RunLocalTests
+
+    deploy_to_production:
+      runs-on: ubuntu-latest
+      needs: deploy
+      if: github.event.inputs.deploy_to_prod == 'true'
+      steps:
+        - name: Deploy to Production
+          run: |
+            echo "Manual deployment to production requested"
+            sfdx force:source:deploy -p force-app --testlevel RunAllTestsInOrg
+
+    feature_flag:
+      runs-on: ubuntu-latest
+      if: github.event.inputs.feature_flag == 'true'
+      steps:
+        - name: Feature Flag Action
+          run: echo "Feature flag is enabled, performing special tasks..."
