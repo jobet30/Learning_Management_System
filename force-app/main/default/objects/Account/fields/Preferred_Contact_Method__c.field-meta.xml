@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Preferred_Contact_Method__c</fullName>
+    <externalId>false</externalId>
+    <label>Preferred Contact Method</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Email</fullName>
+                <default>false</default>
+                <label>Email</label>
+            </value>
+            <value>
+                <fullName>Phone Call</fullName>
+                <default>false</default>
+                <label>Phone Call</label>
+            </value>
+            <value>
+                <fullName>Text Message</fullName>
+                <default>false</default>
+                <label>Text Message</label>
+            </value>
+            <value>
+                <fullName>In-Person</fullName>
+                <default>false</default>
+                <label>In-Person</label>
+            </value>
+            <value>
+                <fullName>Postal Mail</fullName>
+                <default>false</default>
+                <label>Postal Mail</label>
+            </value>
+            <value>
+                <fullName>Video Call</fullName>
+                <default>false</default>
+                <label>Video Call</label>
+            </value>
+            <value>
+                <fullName>Messaging App (e.g., WhatsApp, Messenger)</fullName>
+                <default>false</default>
+                <label>Messaging App (e.g., WhatsApp, Messenger)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

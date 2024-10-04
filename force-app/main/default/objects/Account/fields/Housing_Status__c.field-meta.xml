@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Housing_Status__c</fullName>
+    <externalId>false</externalId>
+    <label>Housing Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>On-Campus Housing</fullName>
+                <default>false</default>
+                <label>On-Campus Housing</label>
+            </value>
+            <value>
+                <fullName>Off-Campus Housing</fullName>
+                <default>false</default>
+                <label>Off-Campus Housing</label>
+            </value>
+            <value>
+                <fullName>Commuter</fullName>
+                <default>false</default>
+                <label>Commuter</label>
+            </value>
+            <value>
+                <fullName>Living with Family</fullName>
+                <default>false</default>
+                <label>Living with Family</label>
+            </value>
+            <value>
+                <fullName>In Transition</fullName>
+                <default>false</default>
+                <label>In Transition</label>
+            </value>
+            <value>
+                <fullName>Seeking Housing</fullName>
+                <default>false</default>
+                <label>Seeking Housing</label>
+            </value>
+            <value>
+                <fullName>No Housing Needed</fullName>
+                <default>false</default>
+                <label>No Housing Needed</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

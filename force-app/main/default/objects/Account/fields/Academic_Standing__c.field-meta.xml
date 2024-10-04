@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Academic_Standing__c</fullName>
+    <externalId>false</externalId>
+    <label>Academic Standing</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Good Standing</fullName>
+                <default>false</default>
+                <label>Good Standing</label>
+            </value>
+            <value>
+                <fullName>Probation</fullName>
+                <default>false</default>
+                <label>Probation</label>
+            </value>
+            <value>
+                <fullName>Suspended</fullName>
+                <default>false</default>
+                <label>Suspended</label>
+            </value>
+            <value>
+                <fullName>Dismissed</fullName>
+                <default>false</default>
+                <label>Dismissed</label>
+            </value>
+            <value>
+                <fullName>Honors</fullName>
+                <default>false</default>
+                <label>Honors</label>
+            </value>
+            <value>
+                <fullName>Deans List</fullName>
+                <default>false</default>
+                <label>Deans List</label>
+            </value>
+            <value>
+                <fullName>At Risk</fullName>
+                <default>false</default>
+                <label>At Risk</label>
+            </value>
+            <value>
+                <fullName>Academic Warning</fullName>
+                <default>false</default>
+                <label>Academic Warning</label>
+            </value>
+            <value>
+                <fullName>Completed</fullName>
+                <default>false</default>
+                <label>Completed</label>
+            </value>
+            <value>
+                <fullName>Pending Review</fullName>
+                <default>false</default>
+                <label>Pending Review</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
