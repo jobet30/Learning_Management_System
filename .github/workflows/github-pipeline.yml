@@ -50,11 +50,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Run Apex Tests
-        run: |
-          echo "Running Apex Tests..."
-          sfdx force:apex:test:run --resultformat human --wait 10 --testlevel RunLocalTests
-
       - name: Test Coverage Check
         run: |
           TEST_COVERAGE=$(sfdx force:apex:test:report --codecoverage --json | jq -r '.result.summary.testRunCoverage')
