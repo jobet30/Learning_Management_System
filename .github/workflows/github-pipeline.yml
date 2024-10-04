@@ -20,9 +20,9 @@ on:
         required: true
         default: 'staging'
         options:
-        - dev
-        - staging
-        - production
+          - dev
+          - staging
+          - production
 
       feature_flag:
         description: 'Feature flag to deploy to'
@@ -35,10 +35,6 @@ on:
         required: false
         default: 'false'
         type: boolean
-
-defaults:
-  run:
-    shell: bash
 
 jobs:
   build_and_lint:
@@ -86,14 +82,12 @@ jobs:
       - name: Select Deployment Environment
         run: |
           if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
-            echo "Deploying to Production environment"
             sfdx force:auth:jwt:grant --clientid $SF_CLIENT_ID --jwtkeyfile assets/server.key --username $SF_PRODUCTION_USERNAME --instanceurl https://login.salesforce.com
           elif [[ "${{ github.event.inputs.environment }}" == "staging" ]]; then
-            echo "Deploying to Staging environment"
             sfdx force:auth:jwt:grant --clientid $SF_CLIENT_ID --jwtkeyfile assets/server.key --username $SF_STAGING_USERNAME --instanceurl https://test.salesforce.com
           else
-            echo "Deploying to Dev environment"
             sfdx force:auth:jwt:grant --clientid $SF_CLIENT_ID --jwtkeyfile assets/server.key --username $SF_DEV_USERNAME --instanceurl https://login.salesforce.com
+          fi
 
       - name: Deploy Source to Target Environment
         run: |
@@ -106,7 +100,6 @@ jobs:
     steps:
       - name: Deploy to Production
         run: |
-          echo "Manual deployment to production requested"
           sfdx force:source:deploy -p force-app --testlevel RunAllTestsInOrg
 
   feature_flag:
