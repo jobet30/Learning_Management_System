@@ -43,31 +43,11 @@ defaults:
 jobs:
   build_and_lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x, 14.x, 16.x]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Cache Node.js modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install Salesforce CLI (@salesforce/cli)
-        run: npm install --global @salesforce/cli
-
-      - name: Lint Apex Code (Using @salesforce/eslint-plugin-lwc for LWC)
+      - name: Lint Apex Code
         run: |
           npx sfdx force:source:convert -d ./mdapi
           npm install @salesforce/eslint-plugin-lwc --save-dev
@@ -76,28 +56,9 @@ jobs:
   apex_test:
     runs-on: ubuntu-latest
     needs: build_and_lint
-    strategy:
-      matrix:
-        org: [dev, staging]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14.x'
-
-      - name: Cache Node.js modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install Salesforce CLI (@salesforce/cli)
-        run: npm install --global @salesforce/cli
 
       - name: Authorize DevHub
         run: |
@@ -121,22 +82,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14.x'
-
-      - name: Cache Node.js modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install Salesforce CLI (@salesforce/cli)
-        run: npm install --global @salesforce/cli
 
       - name: Select Deployment Environment
         run: |
