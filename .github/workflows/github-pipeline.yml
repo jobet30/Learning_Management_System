@@ -65,11 +65,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Deploy Source to Target Environment
-        run: |
-          echo "Deploying to the target environment..."
-          sfdx force:source:deploy -p force-app --testlevel RunLocalTests
-
   deploy_to_production:
     runs-on: ubuntu-latest
     needs: deploy
