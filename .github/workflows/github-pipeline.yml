@@ -6,7 +6,7 @@ on:
       - develop
       - release/*
       - main
-      
+
   pull_request:
     branches:
       - develop
@@ -64,8 +64,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install Salesforce CLI
-        run: npm install --global sfdx-cli
+      - name: Install Salesforce CLI (@salesforce/cli)
+        run: npm install --global @salesforce/cli
 
       - name: Lint Apex Code (Using @salesforce/eslint-plugin-lwc for LWC)
         run: |
@@ -96,8 +96,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install Salesforce CLI
-        run: npm install --global sfdx-cli
+      - name: Install Salesforce CLI (@salesforce/cli)
+        run: npm install --global @salesforce/cli
 
       - name: Authorize DevHub
         run: |
@@ -135,8 +135,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install Salesforce CLI
-        run: npm install --global sfdx-cli
+      - name: Install Salesforce CLI (@salesforce/cli)
+        run: npm install --global @salesforce/cli
 
       - name: Select Deployment Environment
         run: |
