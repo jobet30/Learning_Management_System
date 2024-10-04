@@ -65,17 +65,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Select Deployment Environment
-        run: |
-          echo "Authenticating to target environment..."
-          if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
-            sfdx force:auth:jwt:grant --clientid ${{ secrets.SF_CLIENT_ID }} --jwtkeyfile assets/server.key --username ${{ secrets.SF_PRODUCTION_USERNAME }} --instanceurl https://login.salesforce.com
-          elif [[ "${{ github.event.inputs.environment }}" == "staging" ]]; then
-            sfdx force:auth:jwt:grant --clientid ${{ secrets.SF_CLIENT_ID }} --jwtkeyfile assets/server.key --username ${{ secrets.SF_STAGING_USERNAME }} --instanceurl https://test.salesforce.com
-          else
-            sfdx force:auth:jwt:grant --clientid ${{ secrets.SF_CLIENT_ID }} --jwtkeyfile assets/server.key --username ${{ secrets.SF_DEV_USERNAME }} --instanceurl https://login.salesforce.com
-          fi
-
       - name: Deploy Source to Target Environment
         run: |
           echo "Deploying to the target environment..."
