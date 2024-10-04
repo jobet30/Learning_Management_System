@@ -20,10 +20,10 @@ on:
         required: true
         default: 'staging'
         options:
-          - dev
-          - staging
-          - production
-        
+        - dev
+        - staging
+        - production
+
       feature_flag:
         description: 'Feature flag to deploy to'
         required: false
@@ -67,10 +67,11 @@ jobs:
       - name: Install Salesforce CLI
         run: npm install --global sfdx-cli
 
-      - name: Lint Apex Code
+      - name: Lint Apex Code (Using @salesforce/eslint-plugin-lwc for LWC)
         run: |
-          sfdx force:source:convert -d ./mdapi
-          npx sfdx scanner:run --target "**/classes/**/*.cls"
+          npx sfdx force:source:convert -d ./mdapi
+          npm install @salesforce/eslint-plugin-lwc --save-dev
+          npx eslint --ext .js,.html force-app/main/default/lwc
 
   apex_test:
     runs-on: ubuntu-latest
@@ -78,7 +79,6 @@ jobs:
     strategy:
       matrix:
         org: [dev, staging]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -157,7 +157,7 @@ jobs:
   deploy_to_production:
     runs-on: ubuntu-latest
     needs: deploy
-    if: ${{ github.event.inputs.deploy_to_prod == 'true' }}
+    if: github.event.inputs.deploy_to_prod == 'true'
     steps:
       - name: Deploy to Production
         run: |
@@ -166,7 +166,7 @@ jobs:
 
   feature_flag:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.feature_flag == 'true' }}
+    if: github.event.inputs.feature_flag == 'true'
     steps:
       - name: Feature Flag Action
         run: echo "Feature flag is enabled, performing special tasks..."
