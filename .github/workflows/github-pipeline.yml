@@ -50,11 +50,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Authorize DevHub
-        run: |
-          echo "Authenticating to DevHub..."
-          sfdx force:auth:jwt:grant --clientid ${{ secrets.SF_CLIENT_ID }} --jwtkeyfile assets/server.key --username ${{ secrets.SF_DEV_HUB_USERNAME }} --instanceurl https://login.salesforce.com
-
       - name: Run Apex Tests
         run: |
           echo "Running Apex Tests..."
